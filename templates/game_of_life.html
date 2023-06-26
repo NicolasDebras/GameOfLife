@@ -16,7 +16,7 @@
 </head>
 <body>
     <h1>Jeu de la vie</h1>
-    <table>
+    <table id="grid">
         {% for row in grille %}
             <tr>
                 {% for cell in row %}
@@ -26,27 +26,30 @@
         {% endfor %}
     </table>
     <script>
-        var iterations = {{ iterations }};
         var refreshInterval = 500;
-
+        var iterations = {{ iterations }};
+    
         function updateGrid() {
-            fetch('/game_of_life')
+            fetch('/update_grid')
                 .then(response => response.json())
                 .then(data => {
-                    for (var i = 0; i < data.length; i++) {
-                        for (var j = 0; j < data[i].length; j++) {
-                            var cell = document.getElementsByTagName('tr')[i].getElementsByTagName('td')[j];
-                            cell.style.backgroundColor = data[i][j] === 1 ? 'black' : 'white';
+                    var grille = data.grille;
+                    iterations = data.iterations;
+    
+                    for (var i = 0; i < grille.length; i++) {
+                        for (var j = 0; j < grille[i].length; j++) {
+                            var cell = document.getElementById('grid').rows[i].cells[j];
+                            cell.style.backgroundColor = grille[i][j] === 1 ? 'black' : 'white';
                         }
                     }
-                    iterations--;
+    
                     if (iterations > 0) {
                         setTimeout(updateGrid, refreshInterval);
                     }
                 });
         }
-
+    
         setTimeout(updateGrid, refreshInterval);
-    </script>
+    </script>    
 </body>
 </html>
