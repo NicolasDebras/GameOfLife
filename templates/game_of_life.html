@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jeu de la vie</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        td {
+            width: 20px;
+            height: 20px;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <h1>Jeu de la vie</h1>
+    <table>
+        {% for row in grille %}
+            <tr>
+                {% for cell in row %}
+                    <td style="background-color: {% if cell == 1 %}black{% else %}white{% endif %}"></td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+    <script>
+        var iterations = {{ iterations }};
+        var refreshInterval = 500;
+
+        function updateGrid() {
+            fetch('/game_of_life')
+                .then(response => response.json())
+                .then(data => {
+                    for (var i = 0; i < data.length; i++) {
+                        for (var j = 0; j < data[i].length; j++) {
+                            var cell = document.getElementsByTagName('tr')[i].getElementsByTagName('td')[j];
+                            cell.style.backgroundColor = data[i][j] === 1 ? 'black' : 'white';
+                        }
+                    }
+                    iterations--;
+                    if (iterations > 0) {
+                        setTimeout(updateGrid, refreshInterval);
+                    }
+                });
+        }
+
+        setTimeout(updateGrid, refreshInterval);
+    </script>
+</body>
+</html>
