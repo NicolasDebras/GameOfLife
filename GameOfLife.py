@@ -1,6 +1,8 @@
+from flask import Flask, render_template
 import numpy as np
-import os
 import time
+
+app = Flask(__name__)
 
 def jeu_de_la_vie(grille, iterations):
     for it in range(iterations):
@@ -13,26 +15,25 @@ def jeu_de_la_vie(grille, iterations):
                 elif grille[i, j] == 0 and nb_voisins == 3:
                     nouvelle_grille[i, j] = 1
         grille = nouvelle_grille
-        it = os.system('cls' if os.name == 'nt' else 'clear')
-        for row in grille:
-            print(' '.join(['*' if cell == 1 else ' ' for cell in row]))
         time.sleep(0.5)
+        yield grille.tolist()
 
-# Taille de la grille
-print("Veuillez sasir la taille de la grille")
-nStr = input()
-mStr = input()
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-try:
-    n = int(nStr)
-    m = int(mStr)
-except:
-    print("Input mauvais")
-    raise
+@app.route('/game_of_life')
+def game_of_life():
+    # Taille de la grille
+    n = 10  # Remplacez par votre taille souhaitée
+    m = 10  # Remplacez par votre taille souhaitée
 
-grille = np.random.choice([0, 1], size=(n, m), p=[0.7, 0.3])
+    grille = np.random.choice([0, 1], size=(n, m), p=[0.7, 0.3])
 
-# Nombre d'itérations 
-iterations = 20
+    # Nombre d'itérations
+    iterations = 20
 
-jeu_de_la_vie(grille, iterations)
+    return render_template('game_of_life.html', grille=grille.tolist(), iterations=iterations)
+
+if __name__ == '__main__':
+    app.run()
