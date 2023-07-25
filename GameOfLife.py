@@ -18,10 +18,13 @@ def initialize_grid(file_path):
     num_cells_height, num_cells_width = map(int, size_info.split())
     grid_info = lines[2:]
     
+    print(len(grid_info))
+    print(num_cells_height)
     if len(grid_info) != num_cells_height:
         raise ValueError("The height of the grid in the file does not match the specified size.")
     
     for row in grid_info:
+        print(len(row))
         if len(row) != num_cells_width:
             raise ValueError("The width of a row in the grid does not match the specified size.")
     
@@ -46,11 +49,15 @@ def update_grid(grid, num_cells_height, num_cells_width):
                 new_grid[i, j] = 1
     return new_grid
 
+
+
+# lance la fenetre tkinter qui demande la selction du fichier 
 def select_file():
     try:
         file_path = filedialog.askopenfilename()
         print("Fichier sélectionné :", file_path)
 
+        #init la grid avec notre fichier
         grid, num_cells_height, num_cells_width = initialize_grid(file_path)
 
         pygame.init()
@@ -85,7 +92,11 @@ def select_file():
     except Exception as e:
         print(f"Erreur lors de la lecture du fichier : {e}")
 
-window = tk.Tk()
-select_button = tk.Button(window, text="Sélectionner un fichier", command=select_file)
-select_button.pack()
-window.mainloop()
+
+
+#main en pyhton 
+if __name__ == '__main__':
+    window = tk.Tk()
+    select_button = tk.Button(window, text="Sélectionner un fichier", command=select_file)
+    select_button.pack()
+    window.mainloop()
